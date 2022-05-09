@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    padding: 1rem;
+}
+
+.slide {
+    height: 20rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slide-1 {
+    background: cyan;
+}
+
+.slide-2 {
+    background: #1a228a;
+}
+
+.slide-3 {
+    background: #ec083f;
+}
+
+.slide-4 {
+    background: #a7f621;
+}
+
+
