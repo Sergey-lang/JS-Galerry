@@ -1,4 +1,5 @@
 const GalleryClassName = 'gallery';
+const GalleryDraggableClassName = 'gallery-draggable';
 const GalleryLineClassName = 'gallery-line';
 const GallerySlideClassName = 'gallery-slide';
 
@@ -8,6 +9,9 @@ class Gallery {
     this.size = element.childElementCount;
     this.currentSlide = 0;
     this.currentSlideWasChanged = false;
+    this.settings = {
+      margin: options.margin || 0
+    };
 
     this.manageHTML = this.manageHTML.bind(this);
     this.setParameters = this.setParameters.bind(this);
@@ -40,18 +44,21 @@ class Gallery {
         className: GallerySlideClassName,
       })
     );
-
-    console.log(this.slideNodes);
   }
 
   setParameters() {
     const coordsContainer = this.containerNode.getBoundingClientRect();
     this.width = coordsContainer.width;
-    this.x = -this.currentSlide * this.width;
+    this.maximumX = -(this.size - 1) * (this.width + this.settings.margin);
+    this.x = -this.currentSlide * (this.width + this.settings.margin);
 
-    this.lineNode.style.width = `${this.size * this.width}px`;
+    this.resetStyleTransition();
+
+    this.lineNode.style.width = `${this.size * (this.width + this.settings.margin)}px`;
+    this.setStylePosition();
     Array.from(this.slideNodes).forEach((slideNode) => {
       slideNode.style.width = `${this.width}px`;
+      slideNode.style.marginRight = `${this.settings.margin}px`;
     });
   }
 
@@ -60,10 +67,14 @@ class Gallery {
     window.addEventListener('resize', this.debouncedResizeGallery);
     this.lineNode.addEventListener('pointerdown', this.startDrag);
     window.addEventListener('pointerup', this.stopDrag);
+    window.addEventListener('pointercancel', this.stopDrag);
   }
 
   destroyEvents() {
     window.removeEventListener('resize', this.debouncedResizeGallery);
+    this.lineNode.removeEventListener('pointerdown', this.startDrag);
+    window.removeEventListener('pointerup', this.stopDrag);
+    window.removeEventListener('pointercancel', this.stopDrag);
   }
 
   resizeGallery() {
@@ -74,13 +85,19 @@ class Gallery {
     this.currentSlideWasChanged = false;
     this.clickX = evt.pageX;
     this.startX = this.x;
+
     this.resetStyleTransition();
+
+    this.containerNode.classList.add(GalleryDraggableClassName);
     window.addEventListener('pointermove', this.dragging);
   }
 
   stopDrag() {
     window.removeEventListener('pointermove', this.dragging);
-    this.x = -this.currentSlide * this.width;
+
+    this.containerNode.classList.remove(GalleryDraggableClassName);
+
+    this.x = -this.currentSlide * (this.width + this.settings.margin);
     this.setStylePosition();
     this.setStyleTransition();
   }
@@ -88,7 +105,8 @@ class Gallery {
   dragging(evt) {
     this.dragX = evt.pageX;
     const dragShift = this.dragX - this.clickX;
-    this.x = this.startX + dragShift;
+    const easing = dragShift / 5;
+    this.x = Math.max(Math.min(this.startX + dragShift, easing), this.maximumX + easing);
     this.setStylePosition();
 
     // Change active slide
