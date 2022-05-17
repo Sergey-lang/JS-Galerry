@@ -45,6 +45,7 @@ class Gallery {
         <button class="${GalleryNavLeftClassName}">Left</button>
         <button class="${GalleryNavRightClassName}">Right</button>
       </div>
+      <div class="${GalleryDotsClassName}"></div>
     `;
     this.lineNode = this.containerNode.querySelector(`.${GalleryLineClassName}`);
     this.dotsNode = this.containerNode.querySelector(`.${GalleryDotsClassName}`);
@@ -55,10 +56,10 @@ class Gallery {
         className: GallerySlideClassName,
       })
     );
-
+    console.log(Array.from(Array(this.size).keys()));
     this.dotsNode.innerHTML = Array.from(Array(this.size).keys()).map((key) => (
       `<button class="${GalleryDotClassName} ${key === this.currentSlide ? GalleryDotActiveClassName : ''}"></button>`
-    )).join('')
+    )).join('');
   }
 
   setParameters() {
