@@ -1,18 +1,21 @@
 const GalleryClassName = 'gallery';
-const GalleryDraggableClassName = 'gallery-draggable';
-const GalleryLineClassName = 'gallery-line';
-const GalleryLineContainerClassName = 'gallery-line-container';
-const GallerySlideClassName = 'gallery-slide';
-const GalleryDotsClassName = 'gallery-dots';
-const GalleryDotClassName = 'gallery-dot';
-const GalleryDotActiveClassName = 'gallery-dot-active';
-const GalleryNavClassName = 'gallery-nav';
-const GalleryNavLeftClassName = 'gallery-nav-left';
-const GalleryNavRightClassName = 'gallery-nav-right';
-const GalleryNavDisabledClassName = 'gallery-nav-disabled';
+const GalleryDraggableClassName = `${GalleryClassName}-draggable`;
+const GalleryLineClassName = `${GalleryClassName}-line`;
+const GalleryLineContainerClassName = `${GalleryClassName}-line-container`;
+const GallerySlideClassName = `${GalleryClassName}-slide`;
+// Navigation dots
+const GalleryDotsClassName = `${GalleryClassName}-dots`;
+const GalleryDotClassName = `${GalleryClassName}-dot`;
+const GalleryDotActiveClassName = `${GalleryClassName}-dot-active`;
+// Navigation
+const GalleryNavClassName = `${GalleryClassName}-nav`;
+const GalleryNavLeftClassName = `${GalleryClassName}-nav-left`;
+const GalleryNavRightClassName = `${GalleryClassName}-nav-right`;
+const GalleryNavDisabledClassName = `${GalleryClassName}-nav-disabled`;
 
 class Gallery {
   constructor(element, options = {}) {
+    // Root node
     this.containerNode = element;
     this.size = element.childElementCount;
     this.currentSlide = 0;
@@ -25,17 +28,22 @@ class Gallery {
     this.setParameters = this.setParameters.bind(this);
     this.setEvents = this.setEvents.bind(this);
     this.resizeGallery = this.resizeGallery.bind(this);
+    // Drag
     this.startDrag = this.startDrag.bind(this);
     this.stopDrag = this.stopDrag.bind(this);
     this.dragging = this.dragging.bind(this);
+    // Styles
     this.setStylePosition = this.setStylePosition.bind(this);
     this.setStyleTransition = this.setStyleTransition.bind(this);
     this.resetStyleTransition = this.resetStyleTransition.bind(this);
+    // Dots
     this.clickDots = this.clickDots.bind(this);
+    this.changeActiveDotClass = this.changeActiveDotClass.bind(this);
+    // Nav
     this.moveToLeft = this.moveToLeft.bind(this);
     this.moveToRight = this.moveToRight.bind(this);
+
     this.changeCurrentSlide = this.changeCurrentSlide.bind(this);
-    this.changeActiveDotClass = this.changeActiveDotClass.bind(this);
     this.changeDisabledNav = this.changeDisabledNav.bind(this);
 
     this.manageHTML();
@@ -48,15 +56,15 @@ class Gallery {
     this.containerNode.innerHTML = `
     <div class="${GalleryLineContainerClassName}">
         <div class="${GalleryLineClassName}">
-         ${this.containerNode.innerHTML}
-        <div>
-    </div> 
+            ${this.containerNode.innerHTML}
+        </div>
+    </div>
     <div class="${GalleryNavClassName}">
         <button class="${GalleryNavLeftClassName}">Left</button>
         <button class="${GalleryNavRightClassName}">Right</button>
     </div>
-    <div class="${GalleryDotsClassName}"></div>
-    `;
+    <div class="${GalleryDotsClassName}"></div>`;
+
     this.lineContainerNode = this.containerNode.querySelector(`.${GalleryLineContainerClassName}`);
     this.lineNode = this.containerNode.querySelector(`.${GalleryLineClassName}`);
     this.dotsNode = this.containerNode.querySelector(`.${GalleryDotsClassName}`);
@@ -73,8 +81,8 @@ class Gallery {
     )).join('');
 
     this.dotNodes = this.dotsNode.querySelectorAll(`.${GalleryDotClassName}`);
-    this.navLeft = this.navLeft.querySelectorAll(`.${GalleryNavLeftClassName}`);
-    this.navRight = this.navRight.querySelectorAll(`.${GalleryNavRightClassName}`);
+    this.navLeft = this.containerNode.querySelector(`.${GalleryNavLeftClassName}`);
+    this.navRight = this.containerNode.querySelector(`.${GalleryNavRightClassName}`);
   }
 
   setParameters() {
@@ -87,7 +95,7 @@ class Gallery {
     this.lineNode.style.width = `${this.size * (this.width + this.settings.margin)}px`;
     this.setStylePosition();
     this.changeActiveDotClass();
-    this.changeDisabledNav();
+    // this.changeDisabledNav();
 
     Array.from(this.slideNodes).forEach((slideNode) => {
       slideNode.style.width = `${this.width}px`;
@@ -147,7 +155,6 @@ class Gallery {
     this.x = Math.max(Math.min(this.startX + dragShift, easing), this.maximumX + easing);
     this.setStylePosition();
 
-    // Change active slide
     if (
       dragShift > 20 &&
       dragShift > 0 &&

@@ -75,13 +75,13 @@
 }
 
 .gallery-nav-left {
-    background: url("/img/left.svg") no-repeat center;
+    background: url("icons/left.svg") no-repeat center;
     background-size: contain;
     left: 0;
 }
 
-.absolute {
-    background: url("/img/right.svg") no-repeat center;
+.gallery-nav-right {
+    background: url("icons/right.svg") no-repeat center;
     background-size: contain;
     right: 0;
 }
